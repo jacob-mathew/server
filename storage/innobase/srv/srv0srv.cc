@@ -426,12 +426,7 @@ ulong	srv_doublewrite_batch_size	= 120;
 ulong	srv_replication_delay		= 0;
 
 /*-------------------------------------------*/
-#ifdef HAVE_MEMORY_BARRIER
-/* No idea to wait long with memory barriers */
 UNIV_INTERN ulong	srv_n_spin_wait_rounds	= 15;
-#else
-UNIV_INTERN ulong	srv_n_spin_wait_rounds	= 30;
-#endif
 ulong	srv_spin_wait_delay	= 6;
 ibool	srv_priority_boost	= TRUE;
 
