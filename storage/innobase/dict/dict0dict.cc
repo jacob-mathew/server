@@ -4168,6 +4168,39 @@ dict_strip_comments(
 	sptr = sql_string;
 	ptr = str;
 
+	//	Check for an executable comment
+	//
+	//	The syntax is '/*!' or '/*M!' at the very beginning of the statement
+	//	and '*/' at the very end of the statement
+	//
+	//	Note that it is not necessary to remove the optional revision number
+	//	due to the way the statement is utilized by the caller solely for
+	//	foreign key definitions during table creation
+	if ( ( *sptr == '/' ) && ( sptr[ 1 ] == '*' ) &&
+		 ( eptr[ -2 ] == '*' ) && ( eptr[ -1 ] == '/' ) )
+	{
+		if ( sptr[ 2 ] == '!' )
+		{
+			/* An executable comment */
+
+			/* Remove the comment start delimiter */
+			sptr += 3;
+
+			/* Remove the comment end delimiter */
+			eptr -= 2;
+		}
+		else if ( ( sptr[ 2 ] == 'M' ) && ( sptr[ 3 ] == '!') )
+		{
+			/* An executable comment for MariaDB only */
+
+			/* Remove the comment start delimiter */
+			sptr += 4;
+
+			/* Remove the comment end delimiter */
+			eptr -= 2;
+		}
+	}
+
 	for (;;) {
 scan_more:
 		if (sptr >= eptr || *sptr == '\0') {
